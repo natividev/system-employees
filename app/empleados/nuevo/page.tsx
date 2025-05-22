@@ -5,7 +5,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import axios from "axios";
+import { toast } from "react-hot-toast";
+import axios, { AxiosError } from "axios";
 
 const departamentosSV = [
   "Ahuachapán",
@@ -65,9 +66,7 @@ function StepIndicator({
             </div>
             <span
               className={`mt-2 text-sm ${
-                isActive
-                  ? "text-blue-600 font-semibold"
-                  : "text-gray-400"
+                isActive ? "text-blue-600 font-semibold" : "text-gray-400"
               }`}
             >
               {step}
@@ -110,9 +109,16 @@ export default function NuevoEmpleadoPage() {
   const onSubmit: SubmitHandler<EmpleadoForm> = async (data) => {
     try {
       await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/empleados`, data);
+      toast.success("Empleado creado exitosamente");
       router.push("/empleados");
-    } catch (err) {
+    } catch (error) {
+      const err = error as AxiosError<{ error: string }>;
       console.error("Error al crear el empleado:", err);
+      const message =
+        err?.response?.data?.error ||
+        "Error inesperado al crear el empleado. Intenta nuevamente.";
+
+      toast.error(message);
     }
   };
 
@@ -133,7 +139,9 @@ export default function NuevoEmpleadoPage() {
                 className="w-full p-2 border rounded"
               />
               {errors.nombre && (
-                <p className="text-red-500 text-sm mt-1">{errors.nombre.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.nombre.message}
+                </p>
               )}
             </div>
 
@@ -145,7 +153,9 @@ export default function NuevoEmpleadoPage() {
                 className="w-full p-2 border rounded"
               />
               {errors.apellido && (
-                <p className="text-red-500 text-sm mt-1">{errors.apellido.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.apellido.message}
+                </p>
               )}
             </div>
           </>
@@ -161,7 +171,9 @@ export default function NuevoEmpleadoPage() {
                 className="w-full p-2 border rounded"
               />
               {errors.edad && (
-                <p className="text-red-500 text-sm mt-1">{errors.edad.message}</p>
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.edad.message}
+                </p>
               )}
             </div>
 
@@ -198,7 +210,9 @@ export default function NuevoEmpleadoPage() {
               className="w-full p-2 border rounded"
             />
             {errors.salario && (
-              <p className="text-red-500 text-sm mt-1">{errors.salario.message}</p>
+              <p className="text-red-500 text-sm mt-1">
+                {errors.salario.message}
+              </p>
             )}
           </div>
         )}

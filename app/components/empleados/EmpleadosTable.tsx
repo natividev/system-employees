@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
 import {
   Table,
   TableBody,
@@ -13,18 +12,18 @@ import {
 } from "@/components/ui/table";
 import { Empleado } from "@/src/types/empleado";
 import { useRouter } from "next/navigation";
-import {
-  Menu,
-  Item,
-  useContextMenu,
-} from "react-contexify";
+import { Menu, Item, useContextMenu } from "react-contexify";
 import "react-contexify/ReactContexify.css";
+import { toast } from "react-hot-toast";
+import axios, { AxiosError } from "axios";
 
 export function EmpleadosTable() {
   const [empleados, setEmpleados] = useState<Empleado[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [selectedEmpleado, setSelectedEmpleado] = useState<Empleado | null>(null);
+  const [selectedEmpleado, setSelectedEmpleado] = useState<Empleado | null>(
+    null
+  );
   const router = useRouter();
 
   const { show } = useContextMenu({
@@ -53,10 +52,18 @@ export function EmpleadosTable() {
   const handleEliminar = async () => {
     if (!selectedEmpleado) return;
     try {
-      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/empleados/${selectedEmpleado._id}`);
-      setEmpleados(empleados.filter(e => e._id !== selectedEmpleado._id));
-    } catch (err) {
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_API_URL}/empleados/${selectedEmpleado._id}`
+      );
+      setEmpleados(empleados.filter((e) => e._id !== selectedEmpleado._id));
+      toast.success("Empleado eliminado correctamente");
+    } catch (error) {
+      const err = error as AxiosError<{ error: string }>;
+      const message =
+        err.response?.data?.error ||
+        "No se pudo eliminar el empleado. Intenta nuevamente.";
       console.error("Error al eliminar:", err);
+      toast.error(message);
     }
   };
 

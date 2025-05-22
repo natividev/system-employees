@@ -1,6 +1,7 @@
 import "./globals.css";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./components/app-sidebar";
+import { Toaster } from "react-hot-toast";
 
 export default function RootLayout({
   children,
@@ -17,6 +18,7 @@ export default function RootLayout({
             {children}
           </main>
         </SidebarProvider>
+        <Toaster position="top-right" reverseOrder={false} /> 
       </body>
     </html>
   );

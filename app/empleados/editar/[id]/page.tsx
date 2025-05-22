@@ -5,7 +5,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+import { toast } from "react-hot-toast";
 
 const departamentosSV = [
   "Ahuachapán",
@@ -129,9 +130,17 @@ export default function EditarEmpleadoPage() {
         `${process.env.NEXT_PUBLIC_API_URL}/empleados/${empleadoId}`,
         data
       );
+      toast.success("Empleado actualizado exitosamente");
       router.push("/empleados");
-    } catch (err) {
+    } catch (error) {
+      const err = error as AxiosError<{ error: string }>;
       console.error("Error al actualizar el empleado:", err);
+
+      const message =
+        err.response?.data?.error ||
+        "Error inesperado al actualizar el empleado. Intenta nuevamente.";
+
+      toast.error(message);
     }
   };
 
