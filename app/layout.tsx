@@ -1,7 +1,7 @@
 import "./globals.css";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./components/app-sidebar";
-import { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast"
 
 export default function RootLayout({
   children,
